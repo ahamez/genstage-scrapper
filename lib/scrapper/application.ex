@@ -17,11 +17,17 @@ defmodule Scrapper.Application do
       online_page_producer_consumer_spec(id: :producer_consumer_2),
 
       # Using a supervisor that will take care of PageConsumerTask workers
-      PageConsumerSupervisor
+      PageConsumerSupervisor,
 
       # Or, spawn them here (note that it's using the PageConsumer module)
       # Supervisor.child_spec(PageConsumer, id: :consumer_1),
       # Supervisor.child_spec(PageConsumer, id: :consumer_2)
+
+      PartitionDispatcherProducer,
+
+      # There can be only one consumer per partition
+      Supervisor.child_spec({PartitionDispatcherConsumer, :a}, id: :partition_consumer_1),
+      Supervisor.child_spec({PartitionDispatcherConsumer, :b}, id: :partition_consumer_2)
     ]
 
     opts = [strategy: :one_for_one, name: Scrapper.Supervisor]
